@@ -4,16 +4,23 @@
 
 A lightweight CLI tool that gives you instant, beautiful insights into your system's health. No more cryptic `df` output or hunting through Activity Monitor - just clean, readable information about your disk, memory, CPU, and more.
 
+## 📸 Preview
+
+<img width="501" height="288" alt="image" src="https://github.com/user-attachments/assets/2165c2a3-b31a-428f-b4c9-183c216d0918" />
+
+
 ## ✨ Features
 
-**Current (Phase 1):**
-- 📊 Beautiful system overview at a glance
-- 💾 Disk usage for main mount
-- 🧠 Memory breakdown (used/total)
-- ⚡ CPU usage percentage
-- 📈 Top 5 processes by memory
-- 🎨 Color-coded metrics (green/yellow/red based on usage)
-- 📡 Live monitoring mode (updates every 2s)
+**Current (Phase 1)**
+
+- 🧭 **Beautiful system overview at a glance**  
+- 💽 **Disk usage for main mount**  
+- 🧠 **Memory breakdown (used / total)**  
+- ⚙️ **CPU usage percentage**  
+- 📊 **Top 5 processes by memory**  
+- 🎨 **Color-coded metrics (green / yellow / red based on usage)**  
+- 🔄 **Live monitoring mode (updates every 2s)**
+
 
 ## 🚀 Quick Start
 
@@ -49,10 +56,6 @@ csys --live
 # Help
 csys --help
 ```
-
-## 📸 Screenshot
-
-<img width="648" height="282" alt="image" src="https://github.com/user-attachments/assets/5ae49153-0e55-4583-9f93-ad491ce9443d" />
 
 ## 🛠️ Tech Stack
 

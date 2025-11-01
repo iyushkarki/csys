@@ -10,12 +10,42 @@ import (
 )
 
 var (
-	titleStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("14"))
-	borderStyle  = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).Padding(1, 2)
-	metricStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("15"))
-	labelStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))
-	processStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("15"))
-	barFgStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("10"))
+	titleStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#7D56F4"))
+
+	borderStyle = lipgloss.NewStyle().
+			BorderStyle(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#626262")).
+			Padding(1, 2)
+
+	labelStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#626262"))
+
+	normalStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#04B575"))
+
+	warningStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FFA500"))
+
+	criticalStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FF0000")).
+			Bold(true)
+
+	barFilled = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#04B575"))
+
+	barWarning = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FFA500"))
+
+	barCritical = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FF0000"))
+
+	barEmpty = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#3C3C3C"))
+
+	processStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#626262"))
 )
 
 func FormatSystemOverview(
@@ -36,7 +66,7 @@ func FormatSystemOverviewWithTime(
 ) string {
 	var content string
 
-	header := "📊  SYSTEM OVERVIEW"
+	header := "SYSTEM OVERVIEW"
 	if !timestamp.IsZero() {
 		header += fmt.Sprintf("  (Last updated: %s)", timestamp.Format("15:04:05"))
 	}
@@ -50,67 +80,75 @@ func FormatSystemOverviewWithTime(
 }
 
 func formatMetricsSection(diskInfo *system.DiskInfo, memInfo *system.MemoryInfo, cpuPercent float64) string {
-	diskPercent := 0
-	diskUsed := "0"
-	diskTotal := "0"
+	var lines string
+
+	// Disk
 	if len(diskInfo.Partitions) > 0 {
 		disk := diskInfo.Partitions[0]
-		diskPercent = int(disk.Percent)
-		diskUsed = humanize.Bytes(disk.Used)
-		diskTotal = humanize.Bytes(disk.Total)
+		diskPercent := disk.Percent
+		diskUsed := humanize.IBytes(disk.Used)
+		diskTotal := humanize.IBytes(disk.Total)
+		diskBar := createProgressBar(diskPercent, 20)
+		diskPercStr := getColoredPercent(diskPercent)
+
+		lines += fmt.Sprintf("◉ Disk    %s %s  %s / %s\n",
+			diskBar,
+			diskPercStr,
+			diskUsed,
+			diskTotal,
+		)
 	}
 
-	memPercent := int(memInfo.UsedPercent)
-	memUsed := humanize.Bytes(memInfo.Used)
-	memTotal := humanize.Bytes(memInfo.Total)
-	cpuPercentInt := int(cpuPercent)
-
-	diskBar := createProgressBar(diskPercent, 10)
-	memBar := createProgressBar(memPercent, 10)
-	cpuBar := createProgressBar(cpuPercentInt, 10)
-
-	diskPercStr := getColoredPercent(diskPercent)
+	// Memory
+	memPercent := memInfo.UsedPercent
+	memUsed := humanize.IBytes(memInfo.Used)
+	memTotal := humanize.IBytes(memInfo.Total)
+	memBar := createProgressBar(memPercent, 20)
 	memPercStr := getColoredPercent(memPercent)
-	cpuPercStr := getColoredPercent(cpuPercentInt)
 
-	lines := fmt.Sprintf("  💾  Disk      %6s / %6s   %s  %s\n", diskUsed, diskTotal, diskBar, diskPercStr)
-	lines += fmt.Sprintf("  🧠  Memory    %6s / %6s   %s  %s\n", memUsed, memTotal, memBar, memPercStr)
-	lines += fmt.Sprintf("  ⚡  CPU        %6.1f%% / 100%%   %s  %s", cpuPercent, cpuBar, cpuPercStr)
+	lines += fmt.Sprintf("▣ Memory  %s %s  %s / %s\n",
+		memBar,
+		memPercStr,
+		memUsed,
+		memTotal,
+	)
 
-	return metricStyle.Render(lines)
-}
+	// CPU
+	cpuBar := createProgressBar(cpuPercent, 20)
+	cpuPercStr := getColoredPercent(cpuPercent)
 
-func getColoredPercent(percent int) string {
-	color := getColorForPercent(percent)
-	return color.Render(fmt.Sprintf("%3d%%", percent))
+	lines += fmt.Sprintf("△ CPU     %s %s",
+		cpuBar,
+		cpuPercStr,
+	)
+
+	return lines
 }
 
 func formatProcessSection(procs []system.ProcessInfo) string {
-	header := labelStyle.Render("📈  TOP MEMORY PROCESSES:")
-	var processes string
+	header := titleStyle.Render("▲ TOP MEMORY PROCESSES") + "\n"
 
 	if len(procs) == 0 {
-		processes = "\n  No processes found"
-	} else {
-		processes = "\n"
-		for i, proc := range procs {
-			if i >= 5 {
-				break
-			}
-			memMB := float64(proc.Memory) / 1024 / 1024
-			line := fmt.Sprintf("  %d  • %-27s  %8.1f MB\n",
-				i+1,
-				truncate(proc.Name, 27),
-				memMB,
-			)
-			processes += line
-		}
+		return header + "  No processes found"
 	}
 
-	return header + processStyle.Render(processes)
+	var processes string
+	for i, proc := range procs {
+		if i >= 5 {
+			break
+		}
+		memSize := humanize.IBytes(proc.Memory)
+		processes += fmt.Sprintf("  %d  %s  %s\n",
+			i+1,
+			processStyle.Render(truncate(proc.Name, 35)),
+			normalStyle.Render(memSize),
+		)
+	}
+
+	return header + processes
 }
 
-func createProgressBar(percent int, width int) string {
+func createProgressBar(percent float64, width int) string {
 	if percent > 100 {
 		percent = 100
 	}
@@ -118,18 +156,45 @@ func createProgressBar(percent int, width int) string {
 		percent = 0
 	}
 
-	filled := (percent*width + 50) / 100
-	bar := ""
+	filled := int(float64(width) * percent / 100)
+	empty := width - filled
 
-	for i := 0; i < width; i++ {
-		if i < filled {
-			bar += "█"
-		} else {
-			bar += "░"
-		}
+	var barStyle lipgloss.Style
+	if percent >= 90 {
+		barStyle = barCritical
+	} else if percent >= 70 {
+		barStyle = barWarning
+	} else {
+		barStyle = barFilled
 	}
 
-	return barFgStyle.Render(bar)
+	bar := ""
+	for i := 0; i < filled; i++ {
+		bar += "█"
+	}
+	filledPart := barStyle.Render(bar)
+
+	emptyBar := ""
+	for i := 0; i < empty; i++ {
+		emptyBar += "░"
+	}
+	emptyPart := barEmpty.Render(emptyBar)
+
+	return filledPart + emptyPart
+}
+
+func getColoredPercent(percent float64) string {
+	color := getColorForPercent(percent)
+	return color.Render(fmt.Sprintf("%.0f%%", percent))
+}
+
+func getColorForPercent(percent float64) lipgloss.Style {
+	if percent >= 90 {
+		return criticalStyle
+	} else if percent >= 70 {
+		return warningStyle
+	}
+	return normalStyle
 }
 
 func truncate(s string, maxLen int) string {
@@ -137,13 +202,4 @@ func truncate(s string, maxLen int) string {
 		return s[:maxLen-3] + "..."
 	}
 	return s
-}
-
-func getColorForPercent(percent int) lipgloss.Style {
-	if percent >= 80 {
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("1")).Bold(true)
-	} else if percent >= 60 {
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("3"))
-	}
-	return lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 }
