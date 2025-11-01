@@ -10,12 +10,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var Version = "dev"
 var liveMode bool
 
 var rootCmd = &cobra.Command{
-	Use:   "csys",
-	Short: "Beautiful system monitoring CLI",
-	Long:  "csys - check system. A lightweight CLI tool for instant system health insights.",
+	Use:     "csys",
+	Short:   "Beautiful system monitoring CLI",
+	Long:    "csys - check system. A lightweight CLI tool for instant system health insights.",
+	Version: Version,
 	Run: func(cmd *cobra.Command, args []string) {
 		if liveMode {
 			runLiveMode()
