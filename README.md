@@ -52,24 +52,7 @@ csys --help
 
 ## 📸 Screenshot
 
-```
-╭──────────────────────────────────────────────────────────╮
-│                                                          │
-│  📊  SYSTEM OVERVIEW                                     │
-│                                                          │
-│    💾  Disk      151 GB / 245 GB   ██████░░░░   61%     │
-│    🧠  Memory     12 GB /  17 GB   ███████░░░   70%     │
-│    ⚡  CPU          8.6% / 100%   █░░░░░░░░░    8%     │
-│                                                          │
-│  📈  TOP MEMORY PROCESSES:                              │
-│  1  • plugin-container                709.0 MB          │
-│  2  • zen                             506.3 MB          │
-│  3  • gopls_0.20.0_go_1.25.3         494.7 MB          │
-│  4  • plugin-container               435.8 MB          │
-│  5  • Google Chrome                  417.9 MB          │
-│                                                          │
-╰──────────────────────────────────────────────────────────╯
-```
+<img width="648" height="282" alt="image" src="https://github.com/user-attachments/assets/5ae49153-0e55-4583-9f93-ad491ce9443d" />
 
 ## 🛠️ Tech Stack
 
