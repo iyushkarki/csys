@@ -15,10 +15,10 @@ ARCH=$(uname -m)
 case "$ARCH" in
   arm64) ARCH="arm64" ;;
   amd64|x86_64) ARCH="amd64" ;;
-  *) 
+  *)
     echo "❌ Unsupported architecture: $ARCH"
     echo "💡 Fallback: Install with: go install github.com/$REPO@latest"
-    exit 1 
+    exit 1
     ;;
 esac
 
@@ -34,7 +34,7 @@ esac
 
 echo "📦 Detecting system: $OS-$ARCH"
 
-LATEST=$(curl -s https://api.github.com/repos/$REPO/releases/latest | grep -o '"tag_name":"[^"]*' | cut -d'"' -f4)
+LATEST=$(curl -s https://api.github.com/repos/$REPO/releases/latest | sed -n 's/.*"tag_name": "\([^"]*\)".*/\1/p')
 
 if [ -z "$LATEST" ]; then
   echo "⚠️  No releases found on GitHub"
@@ -70,7 +70,7 @@ else
   BIN_PATH="$HOME/.local/bin/$BIN_NAME"
   mkdir -p "$HOME/.local/bin"
   mv "$TEMP_DIR/$BIN_NAME" "$BIN_PATH"
-  
+
   if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
     echo ""
     echo "⚠️  Warning: $HOME/.local/bin is not in your PATH"
