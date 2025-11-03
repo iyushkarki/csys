@@ -26,7 +26,7 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 
 ### Installation
 
-#### Option 1: One-liner (requires GitHub release)
+#### Option 1: One-liner (fastest install)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/iyushkarki/csys/main/install.sh | bash
 ```
