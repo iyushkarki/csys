@@ -14,10 +14,11 @@ var Version = "dev"
 var liveMode bool
 
 var rootCmd = &cobra.Command{
-	Use:     "csys",
-	Short:   "Beautiful system monitoring CLI",
-	Long:    "csys - check system. A lightweight CLI tool for instant system health insights.",
-	Version: Version,
+	Use:               "csys",
+	Short:             display.RootShort,
+	Long:              display.RootLong,
+	Version:           Version,
+	CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 	Run: func(cmd *cobra.Command, args []string) {
 		if liveMode {
 			runLiveMode()
@@ -35,7 +36,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolVar(&liveMode, "live", false, "Enable live monitoring (updates every 2s)")
+	rootCmd.Flags().BoolVarP(&liveMode, "live", "l", false, "Enable live monitoring mode (updates every 2 seconds)")
 }
 
 func runSnapshot() {
