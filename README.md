@@ -11,8 +11,7 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 
 ## ✨ Features
 
-**Current (Phase 1)**
-
+**System Monitoring (Phase 1)**
 - 🧭 **Beautiful system overview at a glance**  
 - 💽 **Disk usage for main mount**  
 - 🧠 **Memory breakdown (used / total)**  
@@ -20,6 +19,13 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 - 📊 **Top 5 processes by memory**  
 - 🎨 **Color-coded metrics (green / yellow / red based on usage)**  
 - 🔄 **Live monitoring mode (updates every 2s)**
+
+**Port Management (Phase 2)**
+- 🔌 **List all listening ports** with process name, PID, and memory usage
+- 🛑 **Kill processes on specific ports** with confirmation
+- ⚡ **Kill multiple ports at once** (space-separated)
+- ⚙️ **Force kill option** (--force flag for non-interactive mode)
+- 🎨 **Color-coded port types** (system ports, common dev ports, ephemeral)
 
 
 ## 🚀 Quick Start
@@ -46,6 +52,7 @@ sudo mv csys /usr/local/bin/
 
 ### Usage
 
+**System Monitoring:**
 ```bash
 # Snapshot view (one-time system check)
 csys
@@ -57,20 +64,40 @@ csys --live
 csys --help
 ```
 
+**Port Management:**
+```bash
+# List all listening ports
+csys ports
+
+# Kill process on port 3000
+csys ports kill 3000
+
+# Kill multiple ports
+csys ports kill 3000 8080 5432
+
+# Force kill without confirmation
+csys ports kill 3000 --force
+
+# Help
+csys ports --help
+csys ports kill --help
+```
+
 ## 🛠️ Tech Stack
 
 - **Cobra** - CLI framework
 - **Lipgloss** - Terminal styling
-- **gopsutil** - Cross-platform system info
+- **gopsutil** - Cross-platform system info & network connections
 - **go-humanize** - Human-readable formatting
+- **syscall** - Cross-platform process signaling (SIGTERM/SIGKILL)
 
 ## 📋 Roadmap
 
 - **Phase 1** ✅ Core system monitor (snapshot + live modes)
-- **Phase 2** 🔜 Disk analysis and directory scanning
-- **Phase 3** 🔜 Cache detection (npm, docker, etc)
-- **Phase 4** 🔜 Interactive cleanup wizard
-- **Phase 5** 🔜 Developer tools (ports, git repos)
+- **Phase 2** ✅ Port management (list + kill + force kill)
+- **Phase 3** 🔜 Disk analysis and directory scanning
+- **Phase 4** 🔜 Cache detection (npm, docker, etc)
+- **Phase 5** 🔜 Interactive cleanup wizard
 - **Phase 6** 🔜 Advanced monitoring (network, temps, battery)
 
 ## 💻 Supported Platforms
