@@ -26,3 +26,7 @@ go.work
 *.swo
 *~
 .DS_Store
+
+# Extra MDs
+AGENT.md
+proj-plan.md
