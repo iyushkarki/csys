@@ -7,6 +7,8 @@ const (
 Quick Start:
   csys              System overview
   csys --live       Live monitoring
+  csys scan         Scan current directory
+  csys scan disk    Scan all disk partitions
   csys ports        List listening ports
   csys ports kill   Kill process on port
   csys ports -h     Help for ports command`
@@ -38,4 +40,14 @@ EXAMPLES:
   csys ports kill 3000 8080         Kill multiple ports (space-separated)
   csys ports kill 3000 --force      Force kill without confirmation
   csys ports kill 3000 -f           Shorthand: -f for --force`
+
+	ScanShort = "Analyze directory storage usage"
+	ScanLong  = `Scan a directory to see a breakdown of file types and top space consumers.
+
+EXAMPLES:
+  csys scan                 Scan current directory
+  csys scan --path ~/Downloads   Scan specific directory`
+
+	ScanDiskShort = "Show usage of all disk partitions"
+	ScanDiskLong  = `Scan and display storage usage for all mounted disk partitions.`
 )

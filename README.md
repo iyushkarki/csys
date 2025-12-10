@@ -8,41 +8,51 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 
 <img width="501" height="288" alt="image" src="https://github.com/user-attachments/assets/2165c2a3-b31a-428f-b4c9-183c216d0918" />
 
-
 ## ✨ Features
 
 **System Monitoring (Phase 1)**
-- 🧭 **Beautiful system overview at a glance**  
-- 💽 **Disk usage for main mount**  
-- 🧠 **Memory breakdown (used / total)**  
-- ⚙️ **CPU usage percentage**  
-- 📊 **Top 5 processes by memory**  
-- 🎨 **Color-coded metrics (green / yellow / red based on usage)**  
+
+- 🧭 **Beautiful system overview at a glance**
+- 💽 **Disk usage for main mount**
+- 🧠 **Memory breakdown (used / total)**
+- ⚙️ **CPU usage percentage**
+- 📊 **Top 5 processes by memory**
+- 🎨 **Color-coded metrics (green / yellow / red based on usage)**
 - 🔄 **Live monitoring mode (updates every 2s)**
 
 **Port Management (Phase 2)**
+
 - 🔌 **List all listening ports** with process name, PID, and memory usage
 - 🛑 **Kill processes on specific ports** with confirmation
 - ⚡ **Kill multiple ports at once** (space-separated)
 - ⚙️ **Force kill option** (--force flag for non-interactive mode)
 - 🎨 **Color-coded port types** (system ports, common dev ports, ephemeral)
 
+**Disk Analysis (Phase 3)**
+
+- 📂 **Directory Scan** with file type breakdown
+- 📊 **Visual storage usage** for top consumers
+- 💾 **Disk Partition Scan** with smart categorization (Primary vs System)
+- 🖥️ **Cross-platform support** (Mac/Linux)
 
 ## 🚀 Quick Start
 
 ### Installation
 
 #### Option 1: One-liner (fastest install)
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/iyushkarki/csys/main/install.sh | bash
 ```
 
 #### Option 2: Go install (requires Go 1.19+)
+
 ```bash
 go install github.com/iyushkarki/csys@latest
 ```
 
 #### Option 3: Build from source
+
 ```bash
 git clone https://github.com/iyushkarki/csys
 cd csys
@@ -53,6 +63,7 @@ sudo mv csys /usr/local/bin/
 ### Usage
 
 **System Monitoring:**
+
 ```bash
 # Snapshot view (one-time system check)
 csys
@@ -65,6 +76,7 @@ csys --help
 ```
 
 **Port Management:**
+
 ```bash
 # List all listening ports
 csys ports
@@ -83,6 +95,19 @@ csys ports --help
 csys ports kill --help
 ```
 
+**Disk Analysis:**
+
+```bash
+# Scan current directory
+csys scan
+
+# Scan specific path
+csys scan --path ~/Downloads
+
+# Scan all disk partitions
+csys scan disk
+```
+
 ## 🛠️ Tech Stack
 
 - **Cobra** - CLI framework
@@ -95,7 +120,7 @@ csys ports kill --help
 
 - **Phase 1** ✅ Core system monitor (snapshot + live modes)
 - **Phase 2** ✅ Port management (list + kill + force kill)
-- **Phase 3** 🔜 Disk analysis and directory scanning
+- **Phase 3** ✅ Disk analysis and directory scanning
 - **Phase 4** 🔜 Cache detection (npm, docker, etc)
 - **Phase 5** 🔜 Interactive cleanup wizard
 - **Phase 6** 🔜 Advanced monitoring (network, temps, battery)
@@ -108,16 +133,19 @@ csys ports kill --help
 ## 📝 Development
 
 ### Build
+
 ```bash
 go build -o csys .
 ```
 
 ### Test
+
 ```bash
 go test ./...
 ```
 
 ### Run
+
 ```bash
 ./csys
 ./csys --live
