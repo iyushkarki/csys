@@ -157,7 +157,7 @@ MIT
 
 ## 🤝 Contributing
 
-This is a personal project, but feedback and ideas are welcome!
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
