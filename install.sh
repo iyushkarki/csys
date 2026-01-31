@@ -64,12 +64,16 @@ chmod +x "$TEMP_DIR/$BIN_NAME"
 
 if command -v sudo &> /dev/null; then
   BIN_PATH="/usr/local/bin/$BIN_NAME"
+  ALIAS_PATH="/usr/local/bin/cs"
   echo "📝 Requires sudo to install to $BIN_PATH"
   sudo mv "$TEMP_DIR/$BIN_NAME" "$BIN_PATH"
+  sudo ln -sf "$BIN_PATH" "$ALIAS_PATH"
 else
   BIN_PATH="$HOME/.local/bin/$BIN_NAME"
+  ALIAS_PATH="$HOME/.local/bin/cs"
   mkdir -p "$HOME/.local/bin"
   mv "$TEMP_DIR/$BIN_NAME" "$BIN_PATH"
+  ln -sf "$BIN_PATH" "$ALIAS_PATH"
 
   if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
     echo ""
@@ -82,11 +86,14 @@ fi
 echo ""
 echo "✅ csys installed successfully!"
 echo "📍 Location: $BIN_PATH"
+echo "📍 Alias: cs → $BIN_PATH"
 echo ""
 echo "🎯 Quick start:"
 echo "   csys              # Show system overview"
-echo "   csys --live       # Live monitoring (updates every 2s)"
-echo "   csys --help       # Show all options"
+echo "   cs                # Same as csys (shorter!)"
+echo "   cs --live         # Live monitoring (updates every 2s)"
+echo "   cs g ac \"msg\"     # Git: add + commit"
+echo "   cs --help         # Show all options"
 echo ""
 
 $BIN_PATH --version 2>/dev/null || $BIN_PATH --help | head -2

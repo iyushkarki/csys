@@ -1,6 +1,8 @@
 # csys - System Monitoring CLI
 
-> Beautiful, developer-friendly system monitoring tool for Mac & Linux
+> Beautiful, developer-friendly system monitoring & git shortcuts for Mac & Linux
+
+**Also available as `cs` for faster typing!**
 
 A lightweight CLI tool that gives you instant, beautiful insights into your system's health. No more cryptic `df` output or hunting through Activity Monitor - just clean, readable information about your disk, memory, CPU, and more.
 
@@ -35,6 +37,14 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 - 💾 **Disk Partition Scan** with smart categorization (Primary vs System)
 - 🖥️ **Cross-platform support** (Mac/Linux)
 
+**Git Shortcuts (Phase 4)**
+
+- ⚡ **Quick sync** - Reset to origin/main in one command
+- 🧹 **Branch cleanup** - Delete all branches except current
+- 📝 **Fast commits** - Add + commit (or + push) in one command
+- ↩️ **Undo/amend** - Soft reset and amend helpers
+- 🚀 **WIP commits** - Quick work-in-progress saves
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -44,6 +54,8 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 ```bash
 curl -fsSL https://raw.githubusercontent.com/iyushkarki/csys/main/install.sh | bash
 ```
+
+This installs both `csys` and `cs` (shorter alias).
 
 #### Option 2: Go install (requires Go 1.19+)
 
@@ -108,6 +120,27 @@ csys scan --path ~/Downloads
 csys scan disk
 ```
 
+**Git Shortcuts:**
+
+```bash
+# Use 'cs' for shorter commands
+cs g sync           # Fetch + hard reset to origin/main
+cs g sync develop   # Reset to origin/develop
+cs g clean          # Delete all branches except current
+cs g ac "message"   # Add all + commit
+cs g acp "message"  # Add + commit + push
+cs g soft 2         # Soft reset HEAD~2
+cs g undo           # Undo last commit (keep staged)
+cs g wip            # Quick WIP commit
+cs g amend          # Amend last commit
+cs g rb             # Rebase current branch onto origin/main
+cs g rb develop     # Rebase current branch onto origin/develop
+cs g rb main feat/x # Checkout feat/x, rebase onto origin/main
+cs g log            # Show last 10 commits (graph)
+cs g log 20         # Show last 20 commits
+cs g st             # Quick git status
+```
+
 ## 🛠️ Tech Stack
 
 - **Cobra** - CLI framework
@@ -121,9 +154,10 @@ csys scan disk
 - **Phase 1** ✅ Core system monitor (snapshot + live modes)
 - **Phase 2** ✅ Port management (list + kill + force kill)
 - **Phase 3** ✅ Disk analysis and directory scanning
-- **Phase 4** 🔜 Cache detection (npm, docker, etc)
-- **Phase 5** 🔜 Interactive cleanup wizard
-- **Phase 6** 🔜 Advanced monitoring (network, temps, battery)
+- **Phase 4** ✅ Git shortcuts (sync, clean, commit helpers)
+- **Phase 5** 🔜 Cache detection (npm, docker, etc)
+- **Phase 6** 🔜 Interactive cleanup wizard
+- **Phase 7** 🔜 Advanced monitoring (network, temps, battery)
 
 ## 💻 Supported Platforms
 
