@@ -6,46 +6,48 @@
 
 A lightweight CLI tool that gives you instant, beautiful insights into your system's health. No more cryptic `df` output or hunting through Activity Monitor - just clean, readable information about your disk, memory, CPU, and more.
 
-## 📸 Preview
+## Preview
 
 <img width="501" height="288" alt="image" src="https://github.com/user-attachments/assets/2165c2a3-b31a-428f-b4c9-183c216d0918" />
 
-## ✨ Features
+## Features
 
 **System Monitoring (Phase 1)**
 
-- 🧭 **Beautiful system overview at a glance**
-- 💽 **Disk usage for main mount**
-- 🧠 **Memory breakdown (used / total)**
-- ⚙️ **CPU usage percentage**
-- 📊 **Top 5 processes by memory**
-- 🎨 **Color-coded metrics (green / yellow / red based on usage)**
-- 🔄 **Live monitoring mode (updates every 2s)**
+- Beautiful system overview at a glance
+- Disk usage for main mount
+- Memory breakdown (used / total)
+- CPU usage percentage
+- Top 5 processes by memory
+- Color-coded metrics (green / yellow / red based on usage)
+- Live monitoring mode (updates every 2s)
 
 **Port Management (Phase 2)**
 
-- 🔌 **List all listening ports** with process name, PID, and memory usage
-- 🛑 **Kill processes on specific ports** with confirmation
-- ⚡ **Kill multiple ports at once** (space-separated)
-- ⚙️ **Force kill option** (--force flag for non-interactive mode)
-- 🎨 **Color-coded port types** (system ports, common dev ports, ephemeral)
+- List all listening ports with process name, PID, and memory usage
+- Kill processes on specific ports with confirmation
+- Kill multiple ports at once (space-separated)
+- Force kill option (--force flag for non-interactive mode)
+- Color-coded port types (system ports, common dev ports, ephemeral)
 
 **Disk Analysis (Phase 3)**
 
-- 📂 **Directory Scan** with file type breakdown
-- 📊 **Visual storage usage** for top consumers
-- 💾 **Disk Partition Scan** with smart categorization (Primary vs System)
-- 🖥️ **Cross-platform support** (Mac/Linux)
+- Directory Scan with file type breakdown
+- Visual storage usage for top consumers
+- Disk Partition Scan with smart categorization (Primary vs System)
+- Cross-platform support (Mac/Linux)
 
 **Git Shortcuts (Phase 4)**
 
-- ⚡ **Quick sync** - Reset to origin/main in one command
-- 🧹 **Branch cleanup** - Delete all branches except current
-- 📝 **Fast commits** - Add + commit (or + push) in one command
-- ↩️ **Undo/amend** - Soft reset and amend helpers
-- 🚀 **WIP commits** - Quick work-in-progress saves
+- Quick sync - Reset to origin/main in one command
+- Branch cleanup - Delete all branches except current
+- Fast commits - Add + commit (or + push) in one command
+- Undo/amend - Soft reset and amend helpers
+- WIP commits - Quick work-in-progress saves
+- Branch creation and renaming shortcuts
+- Tab completion for all commands
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -55,7 +57,7 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 curl -fsSL https://raw.githubusercontent.com/iyushkarki/csys/main/install.sh | bash
 ```
 
-This installs both `csys` and `cs` (shorter alias).
+This installs both `csys` and `cs` (shorter alias) with shell completions.
 
 #### Option 2: Go install (requires Go 1.19+)
 
@@ -71,6 +73,24 @@ cd csys
 go build -o csys .
 sudo mv csys /usr/local/bin/
 ```
+
+### Shell Completions
+
+After installing, set up tab completion for your shell:
+
+```bash
+# Bash
+csys completion bash > /etc/bash_completion.d/csys
+
+# Zsh (add to ~/.zshrc: fpath=(~/.zsh/completions $fpath))
+mkdir -p ~/.zsh/completions
+csys completion zsh > ~/.zsh/completions/_csys
+
+# Fish
+csys completion fish > ~/.config/fish/completions/csys.fish
+```
+
+The install script sets up completions automatically.
 
 ### Usage
 
@@ -123,25 +143,32 @@ csys scan disk
 **Git Shortcuts:**
 
 ```bash
-# Use 'cs' for shorter commands
-cs g sync           # Fetch + hard reset to origin/main
-cs g sync develop   # Reset to origin/develop
-cs g clean          # Delete all branches except current
-cs g ac "message"   # Add all + commit
-cs g acp "message"  # Add + commit + push
-cs g soft 2         # Soft reset HEAD~2
-cs g undo           # Undo last commit (keep staged)
-cs g wip            # Quick WIP commit
-cs g amend          # Amend last commit
-cs g rb             # Rebase current branch onto origin/main
-cs g rb develop     # Rebase current branch onto origin/develop
-cs g rb main feat/x # Checkout feat/x, rebase onto origin/main
-cs g log            # Show last 10 commits (graph)
-cs g log 20         # Show last 20 commits
-cs g st             # Quick git status
+# All git commands are two words: cs g<command>
+
+cs gsync             # Fetch + hard reset to origin/main
+cs gsync develop     # Reset to origin/develop
+cs gclean            # Delete all branches except current
+cs gac "message"     # Add all + commit
+cs gco main          # Switch to existing branch
+cs gcb feature/auth  # Create and switch to new branch
+cs gbrn new-name     # Rename current branch
+cs gpush             # Push to remote
+cs gpull             # Pull latest changes
+cs gfp               # Force push (with lease)
+cs gsoft 2           # Soft reset HEAD~2
+cs gundo             # Undo last commit (keep staged)
+cs gwip              # Quick WIP commit
+cs gamend            # Amend last commit (keep message)
+cs gamend "new msg"  # Amend last commit with new message
+cs grb               # Rebase current branch onto origin/main
+cs grb develop       # Rebase current branch onto origin/develop
+cs grb main feat/x   # Checkout feat/x, rebase onto origin/main
+cs glog              # Show last 10 commits (graph)
+cs glog 20           # Show last 20 commits
+cs gst               # Quick git status
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Cobra** - CLI framework
 - **Lipgloss** - Terminal styling
@@ -149,22 +176,22 @@ cs g st             # Quick git status
 - **go-humanize** - Human-readable formatting
 - **syscall** - Cross-platform process signaling (SIGTERM/SIGKILL)
 
-## 📋 Roadmap
+## Roadmap
 
-- **Phase 1** ✅ Core system monitor (snapshot + live modes)
-- **Phase 2** ✅ Port management (list + kill + force kill)
-- **Phase 3** ✅ Disk analysis and directory scanning
-- **Phase 4** ✅ Git shortcuts (sync, clean, commit helpers)
-- **Phase 5** 🔜 Cache detection (npm, docker, etc)
-- **Phase 6** 🔜 Interactive cleanup wizard
-- **Phase 7** 🔜 Advanced monitoring (network, temps, battery)
+- **Phase 1** - Core system monitor (snapshot + live modes)
+- **Phase 2** - Port management (list + kill + force kill)
+- **Phase 3** - Disk analysis and directory scanning
+- **Phase 4** - Git shortcuts (sync, clean, commit helpers)
+- **Phase 5** - Cache detection (npm, docker, etc)
+- **Phase 6** - Interactive cleanup wizard
+- **Phase 7** - Advanced monitoring (network, temps, battery)
 
-## 💻 Supported Platforms
+## Supported Platforms
 
 - macOS (Intel & Apple Silicon)
 - Linux (x86-64 & ARM64)
 
-## 📝 Development
+## Development
 
 ### Build
 
@@ -185,14 +212,14 @@ go test ./...
 ./csys --live
 ```
 
-## 📄 License
+## License
 
 MIT
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-**Built with ❤️**
+**Built with love**

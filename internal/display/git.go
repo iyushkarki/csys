@@ -1,94 +1,113 @@
 package display
 
 const (
-	GShort = "Git shortcuts for common workflows"
-	GLong  = `Git shortcuts for common workflows.
-
-Usage:
-  csys g [command]
-
-Available Commands:
-  sync [branch]   Hard reset to origin (default: main)
-  clean           Delete all local branches except current
-  soft [n]        Soft reset HEAD~n (default: 1)
-  ac "msg"        Add all + commit
-  acp "msg"       Add + commit + push
-  undo            Undo last commit (keep changes staged)
-  wip             Quick WIP commit
-  amend           Amend last commit without editing message
-  rb [base] [branch]  Rebase branch onto base (default: main)`
-
 	GSyncShort = "Hard reset to origin branch"
 	GSyncLong  = `Fetch and hard reset to origin branch.
 
 EXAMPLES:
-  csys g sync           Reset to origin/main
-  csys g sync develop   Reset to origin/develop`
+  cs gsync           Reset to origin/main
+  cs gsync develop   Reset to origin/develop`
 
 	GCleanShort = "Delete all local branches except current"
 	GCleanLong  = `Delete all local branches except the current one.
 
 EXAMPLES:
-  csys g clean          Delete with confirmation
-  csys g clean --force  Delete without confirmation`
+  cs gclean          Delete with confirmation
+  cs gclean --force  Delete without confirmation`
 
 	GSoftShort = "Soft reset HEAD~n for re-committing"
 	GSoftLong  = `Soft reset to undo commits while keeping changes staged.
 
 EXAMPLES:
-  csys g soft       Soft reset HEAD~1
-  csys g soft 3     Soft reset HEAD~3`
+  cs gsoft       Soft reset HEAD~1
+  cs gsoft 3     Soft reset HEAD~3`
 
 	GAcShort = "Add all changes and commit"
 	GAcLong  = `Stage all changes and commit with message.
 
 EXAMPLES:
-  csys g ac "fix bug"
-  csys g ac "add feature"`
+  cs gac "fix bug"
+  cs gac "add feature"`
 
-	GAcpShort = "Add, commit, and push"
-	GAcpLong  = `Stage all changes, commit, and push to remote.
+	GCoShort = "Switch to an existing branch"
+	GCoLong  = `Switch to an existing branch.
 
 EXAMPLES:
-  csys g acp "fix bug"
-  csys g acp "add feature"`
+  cs gco main             Switch to main
+  cs gco feature/auth     Switch to feature/auth`
+
+	GPushShort = "Push to remote"
+	GPushLong  = `Push current branch to remote.
+
+EXAMPLES:
+  cs gpush`
+
+	GPullShort = "Pull latest changes"
+	GPullLong  = `Pull latest changes from remote.
+
+EXAMPLES:
+  cs gpull`
+
+	GFpShort = "Force push (with lease)"
+	GFpLong  = `Force push current branch using --force-with-lease for safety.
+This prevents overwriting others' work while allowing force push after rebase/amend.
+
+EXAMPLES:
+  cs gfp`
 
 	GUndoShort = "Undo last commit, keep changes staged"
 	GUndoLong  = `Undo the last commit but keep all changes staged.
 
 EXAMPLES:
-  csys g undo`
+  cs gundo`
 
 	GWipShort = "Quick WIP commit"
 	GWipLong  = `Stage all changes and create a WIP commit.
 
 EXAMPLES:
-  csys g wip`
+  cs gwip`
 
-	GAmendShort = "Amend last commit without editing message"
+	GAmendShort = "Amend last commit (optionally change message)"
 	GAmendLong  = `Stage all changes and amend the last commit.
+Without arguments, keeps the existing message.
+With a message argument, updates the commit message.
 
 EXAMPLES:
-  csys g amend`
+  cs gamend              Amend without changing message
+  cs gamend "new msg"    Amend with new message`
 
 	GRbShort = "Rebase branch onto base branch"
 	GRbLong  = `Rebase current or specified branch onto a base branch.
 
 EXAMPLES:
-  csys g rb                     Rebase current branch onto origin/main
-  csys g rb develop             Rebase current branch onto origin/develop
-  csys g rb main feature/auth   Checkout feature/auth, rebase onto origin/main`
+  cs grb                     Rebase current branch onto origin/main
+  cs grb develop             Rebase current branch onto origin/develop
+  cs grb main feature/auth   Checkout feature/auth, rebase onto origin/main`
 
 	GLogShort = "Show commit log with graph"
 	GLogLong  = `Show a formatted commit log.
 
 EXAMPLES:
-  csys g log        Show last 10 commits
-  csys g log 20     Show last 20 commits`
+  cs glog        Show last 10 commits
+  cs glog 20     Show last 20 commits`
 
 	GStShort = "Show git status"
 	GStLong  = `Show working tree status (short format).
 
 EXAMPLES:
-  csys g st`
+  cs gst`
+
+	GCbShort = "Create and switch to a new branch"
+	GCbLong  = `Create a new branch and switch to it immediately.
+
+EXAMPLES:
+  cs gcb feature/auth      Create and switch to feature/auth
+  cs gcb fix/login-bug     Create and switch to fix/login-bug`
+
+	GBrnShort = "Rename current branch"
+	GBrnLong  = `Rename the current branch to a new name (force rename).
+
+EXAMPLES:
+  cs gbrn feature/new-name    Rename current branch
+  cs gbrn main                Rename current branch to main`
 )
