@@ -18,7 +18,7 @@ var rootCmd = &cobra.Command{
 	Short:             display.RootShort,
 	Long:              display.RootLong,
 	Version:           Version,
-	CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
+	CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
 	Run: func(cmd *cobra.Command, args []string) {
 		if liveMode {
 			runLiveMode()

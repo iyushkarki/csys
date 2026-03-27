@@ -17,17 +17,23 @@ NETWORK
   csys ports kill   Kill process on port
 
 GIT
-  csys g st         Quick git status
-  csys g log [n]    Show commit log (default: 10)
-  csys g sync       Reset to origin/main
-  csys g clean      Delete all branches except current
-  csys g soft [n]   Soft reset HEAD~n
-  csys g ac "msg"   Add + commit
-  csys g acp "msg"  Add + commit + push
-  csys g undo       Undo last commit
-  csys g wip        Quick WIP commit
-  csys g amend      Amend last commit
-  csys g rb         Rebase current branch onto main`
+  cs gst            Quick git status
+  cs glog [n]       Show commit log (default: 10)
+  cs gsync          Reset to origin/main
+  cs gclean         Delete all branches except current
+  cs gsoft [n]      Soft reset HEAD~n
+  cs gac "msg"      Add + commit
+  cs gco <branch>   Switch to branch
+  cs gcb <branch>   Create + switch to branch
+  cs gbrn <name>    Rename current branch
+  cs gpush          Push to remote
+  cs gpull          Pull latest changes
+  cs gfp            Force push (with lease)
+  cs gundo          Undo last commit
+  cs gwip           Quick WIP commit
+  cs gamend         Amend last commit
+  cs gamend "msg"   Amend with new message
+  cs grb            Rebase onto main`
 
 	PortsShort = "Manage and monitor network ports"
 	PortsLong  = `List listening ports or terminate processes.

@@ -12,20 +12,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var gCmd = &cobra.Command{
-	Use:   "g",
-	Short: display.GShort,
-	Long:  display.GLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-	},
+func branchCompletions(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+	branches, err := git.GetAllBranches()
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	return branches, cobra.ShellCompDirectiveNoFileComp
 }
 
-var syncCmd = &cobra.Command{
-	Use:   "sync [branch]",
-	Short: display.GSyncShort,
-	Long:  display.GSyncLong,
-	Args:  cobra.MaximumNArgs(1),
+var gsyncCmd = &cobra.Command{
+	Use:               "gsync [branch]",
+	Short:             display.GSyncShort,
+	Long:              display.GSyncLong,
+	Args:              cobra.MaximumNArgs(1),
+	ValidArgsFunction: branchCompletions,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !git.IsGitRepo() {
 			fmt.Fprintln(os.Stderr, "Error: not a git repository")
@@ -38,15 +38,13 @@ var syncCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Fetching origin/%s...\n", branch)
-		err := git.RunGit("fetch", "origin", branch)
-		if err != nil {
+		if err := git.RunGit("fetch", "origin", branch); err != nil {
 			fmt.Fprintf(os.Stderr, "Error fetching: %v\n", err)
 			return
 		}
 
 		fmt.Printf("Resetting to origin/%s...\n", branch)
-		err = git.RunGit("reset", "--hard", "origin/"+branch)
-		if err != nil {
+		if err := git.RunGit("reset", "--hard", "origin/"+branch); err != nil {
 			fmt.Fprintf(os.Stderr, "Error resetting: %v\n", err)
 			return
 		}
@@ -55,8 +53,8 @@ var syncCmd = &cobra.Command{
 	},
 }
 
-var cleanCmd = &cobra.Command{
-	Use:   "clean",
+var gcleanCmd = &cobra.Command{
+	Use:   "gclean",
 	Short: display.GCleanShort,
 	Long:  display.GCleanLong,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -109,8 +107,7 @@ var cleanCmd = &cobra.Command{
 
 		deleted := 0
 		for _, b := range toDelete {
-			err := git.RunGit("branch", "-D", b)
-			if err == nil {
+			if err := git.RunGit("branch", "-D", b); err == nil {
 				deleted++
 			}
 		}
@@ -119,8 +116,8 @@ var cleanCmd = &cobra.Command{
 	},
 }
 
-var softCmd = &cobra.Command{
-	Use:   "soft [n]",
+var gsoftCmd = &cobra.Command{
+	Use:   "gsoft [n]",
 	Short: display.GSoftShort,
 	Long:  display.GSoftLong,
 	Args:  cobra.MaximumNArgs(1),
@@ -141,8 +138,7 @@ var softCmd = &cobra.Command{
 		}
 
 		ref := fmt.Sprintf("HEAD~%d", n)
-		err := git.RunGit("reset", "--soft", ref)
-		if err != nil {
+		if err := git.RunGit("reset", "--soft", ref); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			return
 		}
@@ -151,8 +147,8 @@ var softCmd = &cobra.Command{
 	},
 }
 
-var acCmd = &cobra.Command{
-	Use:   "ac <message>",
+var gacCmd = &cobra.Command{
+	Use:   "gac <message>",
 	Short: display.GAcShort,
 	Long:  display.GAcLong,
 	Args:  cobra.ExactArgs(1),
@@ -164,14 +160,12 @@ var acCmd = &cobra.Command{
 
 		message := args[0]
 
-		err := git.RunGit("add", ".")
-		if err != nil {
+		if err := git.RunGit("add", "."); err != nil {
 			fmt.Fprintf(os.Stderr, "Error staging: %v\n", err)
 			return
 		}
 
-		err = git.RunGit("commit", "-m", message)
-		if err != nil {
+		if err := git.RunGit("commit", "-m", message); err != nil {
 			fmt.Fprintf(os.Stderr, "Error committing: %v\n", err)
 			return
 		}
@@ -180,43 +174,86 @@ var acCmd = &cobra.Command{
 	},
 }
 
-var acpCmd = &cobra.Command{
-	Use:   "acp <message>",
-	Short: display.GAcpShort,
-	Long:  display.GAcpLong,
-	Args:  cobra.ExactArgs(1),
+var gcoCmd = &cobra.Command{
+	Use:               "gco <branch>",
+	Short:             display.GCoShort,
+	Long:              display.GCoLong,
+	Args:              cobra.ExactArgs(1),
+	ValidArgsFunction: branchCompletions,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !git.IsGitRepo() {
 			fmt.Fprintln(os.Stderr, "Error: not a git repository")
 			return
 		}
 
-		message := args[0]
-
-		err := git.RunGit("add", ".")
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error staging: %v\n", err)
+		if err := git.RunGit("checkout", args[0]); err != nil {
+			fmt.Fprintf(os.Stderr, "Error switching branch: %v\n", err)
 			return
 		}
 
-		err = git.RunGit("commit", "-m", message)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error committing: %v\n", err)
+		fmt.Printf("✓ Switched to %s\n", args[0])
+	},
+}
+
+var gpushCmd = &cobra.Command{
+	Use:   "gpush",
+	Short: display.GPushShort,
+	Long:  display.GPushLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		if !git.IsGitRepo() {
+			fmt.Fprintln(os.Stderr, "Error: not a git repository")
 			return
 		}
 
-		err = git.RunGit("push")
-		if err != nil {
+		if err := git.RunGit("push"); err != nil {
 			fmt.Fprintf(os.Stderr, "Error pushing: %v\n", err)
 			return
 		}
 
-		fmt.Printf("✓ Committed and pushed: %s\n", message)
+		fmt.Println("✓ Pushed to remote")
 	},
 }
 
-var undoCmd = &cobra.Command{
-	Use:   "undo",
+var gpullCmd = &cobra.Command{
+	Use:   "gpull",
+	Short: display.GPullShort,
+	Long:  display.GPullLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		if !git.IsGitRepo() {
+			fmt.Fprintln(os.Stderr, "Error: not a git repository")
+			return
+		}
+
+		if err := git.RunGit("pull"); err != nil {
+			fmt.Fprintf(os.Stderr, "Error pulling: %v\n", err)
+			return
+		}
+
+		fmt.Println("✓ Pulled latest changes")
+	},
+}
+
+var gfpCmd = &cobra.Command{
+	Use:   "gfp",
+	Short: display.GFpShort,
+	Long:  display.GFpLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		if !git.IsGitRepo() {
+			fmt.Fprintln(os.Stderr, "Error: not a git repository")
+			return
+		}
+
+		if err := git.RunGit("push", "--force-with-lease"); err != nil {
+			fmt.Fprintf(os.Stderr, "Error force pushing: %v\n", err)
+			return
+		}
+
+		fmt.Println("✓ Force pushed (with lease)")
+	},
+}
+
+var gundoCmd = &cobra.Command{
+	Use:   "gundo",
 	Short: display.GUndoShort,
 	Long:  display.GUndoLong,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -225,8 +262,7 @@ var undoCmd = &cobra.Command{
 			return
 		}
 
-		err := git.RunGit("reset", "--soft", "HEAD~1")
-		if err != nil {
+		if err := git.RunGit("reset", "--soft", "HEAD~1"); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			return
 		}
@@ -235,8 +271,8 @@ var undoCmd = &cobra.Command{
 	},
 }
 
-var wipCmd = &cobra.Command{
-	Use:   "wip",
+var gwipCmd = &cobra.Command{
+	Use:   "gwip",
 	Short: display.GWipShort,
 	Long:  display.GWipLong,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -245,14 +281,12 @@ var wipCmd = &cobra.Command{
 			return
 		}
 
-		err := git.RunGit("add", ".")
-		if err != nil {
+		if err := git.RunGit("add", "."); err != nil {
 			fmt.Fprintf(os.Stderr, "Error staging: %v\n", err)
 			return
 		}
 
-		err = git.RunGit("commit", "-m", "WIP")
-		if err != nil {
+		if err := git.RunGit("commit", "-m", "WIP"); err != nil {
 			fmt.Fprintf(os.Stderr, "Error committing: %v\n", err)
 			return
 		}
@@ -261,37 +295,44 @@ var wipCmd = &cobra.Command{
 	},
 }
 
-var amendCmd = &cobra.Command{
-	Use:   "amend",
+var gamendCmd = &cobra.Command{
+	Use:   "gamend [message]",
 	Short: display.GAmendShort,
 	Long:  display.GAmendLong,
+	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if !git.IsGitRepo() {
 			fmt.Fprintln(os.Stderr, "Error: not a git repository")
 			return
 		}
 
-		err := git.RunGit("add", ".")
-		if err != nil {
+		if err := git.RunGit("add", "."); err != nil {
 			fmt.Fprintf(os.Stderr, "Error staging: %v\n", err)
 			return
 		}
 
-		err = git.RunGit("commit", "--amend", "--no-edit")
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error amending: %v\n", err)
-			return
+		if len(args) > 0 {
+			if err := git.RunGit("commit", "--amend", "-m", args[0]); err != nil {
+				fmt.Fprintf(os.Stderr, "Error amending: %v\n", err)
+				return
+			}
+			fmt.Printf("✓ Amended last commit: %s\n", args[0])
+		} else {
+			if err := git.RunGit("commit", "--amend", "--no-edit"); err != nil {
+				fmt.Fprintf(os.Stderr, "Error amending: %v\n", err)
+				return
+			}
+			fmt.Println("✓ Amended last commit")
 		}
-
-		fmt.Println("✓ Amended last commit")
 	},
 }
 
-var rbCmd = &cobra.Command{
-	Use:   "rb [base] [branch]",
-	Short: display.GRbShort,
-	Long:  display.GRbLong,
-	Args:  cobra.MaximumNArgs(2),
+var grbCmd = &cobra.Command{
+	Use:               "grb [base] [branch]",
+	Short:             display.GRbShort,
+	Long:              display.GRbLong,
+	Args:              cobra.MaximumNArgs(2),
+	ValidArgsFunction: branchCompletions,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !git.IsGitInstalled() {
 			fmt.Fprintln(os.Stderr, "Error: git is not installed")
@@ -325,16 +366,14 @@ var rbCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Fetching origin/%s...\n", base)
-		err = git.RunGit("fetch", "origin", base)
-		if err != nil {
+		if err := git.RunGit("fetch", "origin", base); err != nil {
 			fmt.Fprintf(os.Stderr, "Error fetching: %v\n", err)
 			return
 		}
 
 		if targetBranch != "" {
 			fmt.Printf("Checking out %s...\n", targetBranch)
-			err = git.RunGit("checkout", targetBranch)
-			if err != nil {
+			if err := git.RunGit("checkout", targetBranch); err != nil {
 				fmt.Fprintf(os.Stderr, "Error checking out: %v\n", err)
 				return
 			}
@@ -346,8 +385,7 @@ var rbCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Rebasing %s onto origin/%s...\n", rebaseBranch, base)
-		err = git.RunGit("rebase", "origin/"+base)
-		if err != nil {
+		if err := git.RunGit("rebase", "origin/"+base); err != nil {
 			fmt.Fprintf(os.Stderr, "Error rebasing: %v\n", err)
 			fmt.Fprintln(os.Stderr, "Resolve conflicts and run: git rebase --continue")
 			return
@@ -357,8 +395,8 @@ var rbCmd = &cobra.Command{
 	},
 }
 
-var logCmd = &cobra.Command{
-	Use:   "log [n]",
+var glogCmd = &cobra.Command{
+	Use:   "glog [n]",
 	Short: display.GLogShort,
 	Long:  display.GLogLong,
 	Args:  cobra.MaximumNArgs(1),
@@ -368,17 +406,22 @@ var logCmd = &cobra.Command{
 			return
 		}
 
-		n := "10"
+		n := 10
 		if len(args) > 0 {
-			n = args[0]
+			parsed, err := strconv.Atoi(args[0])
+			if err != nil || parsed < 1 {
+				fmt.Fprintln(os.Stderr, "Error: n must be a positive integer")
+				return
+			}
+			n = parsed
 		}
 
-		git.RunGit("log", "--oneline", "--graph", "--decorate", "-n", n)
+		git.RunGit("log", "--oneline", "--graph", "--decorate", "-n", strconv.Itoa(n))
 	},
 }
 
-var stCmd = &cobra.Command{
-	Use:   "st",
+var gstCmd = &cobra.Command{
+	Use:   "gst",
 	Short: display.GStShort,
 	Long:  display.GStLong,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -391,19 +434,71 @@ var stCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(gCmd)
-	gCmd.AddCommand(syncCmd)
-	gCmd.AddCommand(cleanCmd)
-	gCmd.AddCommand(softCmd)
-	gCmd.AddCommand(acCmd)
-	gCmd.AddCommand(acpCmd)
-	gCmd.AddCommand(undoCmd)
-	gCmd.AddCommand(wipCmd)
-	gCmd.AddCommand(amendCmd)
-	gCmd.AddCommand(rbCmd)
-	gCmd.AddCommand(logCmd)
-	gCmd.AddCommand(stCmd)
+var gcbCmd = &cobra.Command{
+	Use:   "gcb <branch>",
+	Short: display.GCbShort,
+	Long:  display.GCbLong,
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		if !git.IsGitRepo() {
+			fmt.Fprintln(os.Stderr, "Error: not a git repository")
+			return
+		}
 
-	cleanCmd.Flags().BoolP("force", "f", false, "Skip confirmation")
+		branch := args[0]
+		if err := git.RunGit("checkout", "-b", branch); err != nil {
+			fmt.Fprintf(os.Stderr, "Error creating branch: %v\n", err)
+			return
+		}
+
+		fmt.Printf("✓ Created and switched to %s\n", branch)
+	},
+}
+
+var gbrnCmd = &cobra.Command{
+	Use:   "gbrn <name>",
+	Short: display.GBrnShort,
+	Long:  display.GBrnLong,
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		if !git.IsGitRepo() {
+			fmt.Fprintln(os.Stderr, "Error: not a git repository")
+			return
+		}
+
+		name := args[0]
+		oldName, err := git.GetCurrentBranch()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error getting current branch: %v\n", err)
+			return
+		}
+
+		if err := git.RunGit("branch", "-M", name); err != nil {
+			fmt.Fprintf(os.Stderr, "Error renaming branch: %v\n", err)
+			return
+		}
+
+		fmt.Printf("✓ Renamed %s → %s\n", oldName, name)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(gsyncCmd)
+	rootCmd.AddCommand(gcleanCmd)
+	rootCmd.AddCommand(gsoftCmd)
+	rootCmd.AddCommand(gacCmd)
+	rootCmd.AddCommand(gcoCmd)
+	rootCmd.AddCommand(gpushCmd)
+	rootCmd.AddCommand(gpullCmd)
+	rootCmd.AddCommand(gfpCmd)
+	rootCmd.AddCommand(gundoCmd)
+	rootCmd.AddCommand(gwipCmd)
+	rootCmd.AddCommand(gamendCmd)
+	rootCmd.AddCommand(grbCmd)
+	rootCmd.AddCommand(glogCmd)
+	rootCmd.AddCommand(gstCmd)
+	rootCmd.AddCommand(gcbCmd)
+	rootCmd.AddCommand(gbrnCmd)
+
+	gcleanCmd.Flags().BoolP("force", "f", false, "Skip confirmation")
 }
