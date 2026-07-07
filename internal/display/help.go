@@ -11,6 +11,10 @@ SYSTEM
 STORAGE
   csys scan         Scan current directory
   csys scan disk    Show all disk partitions
+  csys clean          Interactive cache cleanup (TUI)
+  csys clean modules  Find stale project artifacts
+  csys clean -s       Clean all safe caches instantly
+  csys clean -n       Dry run — show reclaimable space
 
 NETWORK
   csys ports        List listening ports
@@ -72,4 +76,30 @@ EXAMPLES:
 
 	ScanDiskShort = "Show usage of all disk partitions"
 	ScanDiskLong  = `Scan and display storage usage for all mounted disk partitions.`
+
+	CleanShort = "Find and clean developer caches to free disk space"
+	CleanLong  = `Scan ~30 known locations (package manager caches, Xcode, simulators,
+app leftovers, updater junk) and clean them interactively or automatically.
+
+Every target shows what it is, what happens after cleaning, and when it was
+last used. SAFE caches regenerate automatically and are deleted directly;
+CAREFUL items are moved to the Trash so they stay recoverable.
+
+EXAMPLES:
+  csys clean          Interactive TUI: pick what to clean
+  csys clean --safe   Clean the whole safe tier, no prompt
+  csys clean -n       Dry run: only show what is reclaimable
+  csys clean --json   Machine-readable output
+  csys clean --nuke   Delete permanently instead of trashing
+  csys clean --trash  Move even safe caches to Trash`
+
+	CleanModulesShort = "Find stale project build artifacts (node_modules, target, …)"
+	CleanModulesLong  = `Walk your project folders for build artifacts — node_modules, cargo target,
+.venv, Pods, .next, .turbo — and show them with each project's last activity.
+Artifacts are moved to the Trash and restore with a single install command.
+
+EXAMPLES:
+  csys clean modules                 Scan ~/Documents, ~/dev, ~/code, ~/projects
+  csys clean modules -p ~/work      Scan a specific root
+  csys clean modules --older 3m     Only projects untouched for 3+ months`
 )

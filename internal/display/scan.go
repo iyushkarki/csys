@@ -99,7 +99,7 @@ func RenderScanResult(result *system.ScanResult) string {
 
 		content += fmt.Sprintf("%2d. %-30s  %10s  %s\n",
 			i+1,
-			truncate(name, 30),
+			Truncate(name, 30),
 			size,
 			barStyle.Render(bar),
 		)
@@ -151,7 +151,7 @@ func RenderDiskUsage(info *system.DiskInfo) string {
 		content += scanHeaderStyle.Render("◈ SYSTEM VOLUMES") + "\n"
 		for _, disk := range systemDisks {
 			// Compact view: Name (Usage)
-			name := truncate(disk.Mountpoint, 30)
+			name := Truncate(disk.Mountpoint, 30)
 			if disk.Label != disk.Mountpoint {
 				name = disk.Label
 			}

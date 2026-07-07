@@ -2,12 +2,16 @@ package display
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/dustin/go-humanize"
+	"github.com/iyushkarki/csys/internal/cleaners"
 	"github.com/iyushkarki/csys/internal/system"
 )
+
+var lifetimeFreed = sync.OnceValue(cleaners.LifetimeFreed)
 
 var (
 	titleStyle = lipgloss.NewStyle().
@@ -76,6 +80,11 @@ func FormatSystemOverviewWithTime(
 	content += "\n\n"
 	content += formatProcessSection(topProcs)
 
+	if lifetime := lifetimeFreed(); lifetime > 0 {
+		content += labelStyle.Render("\n✦ cleaned with csys: ") +
+			normalStyle.Render(humanize.IBytes(lifetime))
+	}
+
 	return borderStyle.Render(content)
 }
 
@@ -140,7 +149,7 @@ func formatProcessSection(procs []system.ProcessInfo) string {
 		memSize := humanize.IBytes(proc.Memory)
 		processes += fmt.Sprintf("  %d  %s  %s\n",
 			i+1,
-			processStyle.Render(truncate(proc.Name, 35)),
+			processStyle.Render(Truncate(proc.Name, 35)),
 			normalStyle.Render(memSize),
 		)
 	}
@@ -197,9 +206,10 @@ func getColorForPercent(percent float64) lipgloss.Style {
 	return normalStyle
 }
 
-func truncate(s string, maxLen int) string {
-	if len(s) > maxLen {
-		return s[:maxLen-3] + "..."
+func Truncate(s string, maxLen int) string {
+	r := []rune(s)
+	if len(r) <= maxLen {
+		return s
 	}
-	return s
+	return string(r[:maxLen-1]) + "…"
 }

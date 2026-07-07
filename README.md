@@ -37,6 +37,18 @@ A lightweight CLI tool that gives you instant, beautiful insights into your syst
 - Disk Partition Scan with smart categorization (Primary vs System)
 - Cross-platform support (Mac/Linux)
 
+**Cache Cleanup (Phase 5 & 6)**
+
+- Interactive TUI: checkbox multi-select, live selected-size counter, streaming scan
+- ~30 detectors: npm, bun, pnpm, yarn, pip, uv, Go, Cargo, Homebrew, Gradle, CocoaPods, and more
+- Xcode deep clean: DerivedData, Previews, IB Support, device symbols, old runtimes, orphaned simulators
+- App leftovers: finds data from uninstalled apps (Spotlight-verified, zero false positives by design)
+- `csys clean modules`: stale project artifacts (node_modules, cargo target, .venv, Pods) with per-project last-activity
+- Peace of mind: every item shows what it is, what happens after, when it was last used
+- SAFE caches delete directly (they regenerate); CAREFUL items go to the Trash — recoverable
+- Smart pre-selection: safe + untouched for 7 days comes pre-checked
+- `--safe` one-shot, `--dry-run`, `--json`, `--older 3m`, lifetime freed stat in the overview
+
 **Git Shortcuts (Phase 4)**
 
 - Quick sync - Reset to origin/main in one command
@@ -140,6 +152,24 @@ csys scan --path ~/Downloads
 csys scan disk
 ```
 
+**Cache Cleanup:**
+
+```bash
+# Interactive TUI: scan everything, pick what to clean
+csys clean
+
+# Stale project artifacts (node_modules, cargo target, …)
+csys clean modules
+csys clean modules --older 3m
+
+# Clean the whole safe tier without prompting
+csys clean --safe
+
+# Dry run / machine-readable
+csys clean --dry-run
+csys clean --json
+```
+
 **Git Shortcuts:**
 
 ```bash
@@ -182,7 +212,7 @@ cs gst               # Quick git status
 - **Phase 2** - Port management (list + kill + force kill)
 - **Phase 3** - Disk analysis and directory scanning
 - **Phase 4** - Git shortcuts (sync, clean, commit helpers)
-- **Phase 5** - Cache detection (npm, docker, etc)
+- **Phase 5** - Cache detection (npm, bun, pnpm, Xcode, brew, etc)
 - **Phase 6** - Interactive cleanup wizard
 - **Phase 7** - Advanced monitoring (network, temps, battery)
 
