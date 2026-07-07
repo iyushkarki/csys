@@ -53,7 +53,7 @@ func FormatPortsList(ports []system.PortInfo) string {
 		portColor := getPortTypeColor(port.Port)
 		portNum := portColor.Render(fmt.Sprintf("%5d", port.Port))
 		protocol := formatProtocol(port.Protocol)
-		processName := portProcessStyle.Render(truncate(port.ProcessName, 25))
+		processName := portProcessStyle.Render(Truncate(port.ProcessName, 25))
 		pid := portLabelStyle.Render(fmt.Sprintf("[PID: %d]", port.PID))
 		memory := normalStyle.Render(humanize.IBytes(port.Memory))
 
@@ -73,7 +73,7 @@ func FormatPortsList(ports []system.PortInfo) string {
 func FormatKillConfirmation(portInfo *system.PortInfo) string {
 	portNum := portNumberStyle.Render(fmt.Sprintf("%d", portInfo.Port))
 	protocol := formatProtocol(portInfo.Protocol)
-	processName := portProcessStyle.Render(truncate(portInfo.ProcessName, 30))
+	processName := portProcessStyle.Render(Truncate(portInfo.ProcessName, 30))
 	pid := portLabelStyle.Render(fmt.Sprintf("[PID: %d]", portInfo.PID))
 	memory := normalStyle.Render(humanize.IBytes(portInfo.Memory))
 
